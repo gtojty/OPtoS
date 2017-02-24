@@ -1,0 +1,8 @@
+cd /home/fas/braze/tg422/MikeNet_OS/H50L1e-1/ ; ./msf.sh 1 1 _StoS ; ./msf.sh 1 4 _OtoSint
+cd /home/fas/braze/tg422/MikeNet_OS/H50L1e-1/ ; ./msf.sh 2 1 _StoS ; ./msf.sh 2 4 _OtoSint
+cd /home/fas/braze/tg422/MikeNet_OS/H50L1e-1/ ; ./msf.sh 3 1 _StoS ; ./msf.sh 3 4 _OtoSint
+cd /home/fas/braze/tg422/MikeNet_OS/H50L1e-1/ ; ./msf.sh 4 1 _StoS ; ./msf.sh 4 4 _OtoSint
+cd /home/fas/braze/tg422/MikeNet_OS/H50L1e-1/ ; ./msf.sh 5 1 _StoS ; ./msf.sh 5 4 _OtoSint
+cd /home/fas/braze/tg422/MikeNet_OS/H50L1e-1/ ; ./msf.sh 6 1 _StoS ; ./msf.sh 6 4 _OtoSint
+cd /home/fas/braze/tg422/MikeNet_OS/H50L1e-1/ ; ./msf.sh 7 1 _StoS ; ./msf.sh 7 4 _OtoSint
+cd /home/fas/braze/tg422/MikeNet_OS/H50L1e-1/ ; ./msf.sh 8 1 _StoS ; ./msf.sh 8 4 _OtoSint
