@@ -33,21 +33,21 @@ void build_model(int ticks)
 	/* create our groups. format is: name, num of units,  ticks */
   	input=init_group("Ortho",_OrthoS,ticks);
   	hidden=init_group("Hidden",_HidS,ticks);
-  	output=init_group("Phono",_PhonoS,ticks);
-  	phohid=init_group("PhoHid",_PhoHidS,ticks);
+  	output=init_group("Sem",_SemS,ticks);
+  	semhid=init_group("SemHid",_SemHidS,ticks);
 
 	/* now add our groups to the network object */
   	bind_group_to_net(reading,input);
   	bind_group_to_net(reading,hidden);
   	bind_group_to_net(reading,output);
-  	bind_group_to_net(reading,phohid);
+  	bind_group_to_net(reading,semhid);
 
 	/* now connect our groups, instantiating connection objects c1 through c4 */
   	c1=connect_groups(input,hidden);
   	c2=connect_groups(hidden,output);
   	c3=connect_groups(output,output);
-  	c4=connect_groups(output,phohid);
-  	c5=connect_groups(phohid,output);
+  	c4=connect_groups(output,semhid);
+  	c5=connect_groups(semhid,output);
 
 	/* add connections to our network */
   	bind_connection_to_net(reading,c1);
@@ -83,48 +83,4 @@ int count_connections(Net *net)
   	for(i=0;i<net->numConnections;i++)
     	count += (net->connections[i]->from->numUnits)*(net->connections[i]->to->numUnits);
   	return count;
-}
-
-void load_phoneme(char *PhoF)
-{ // initialize phon by reading from PhoF;
-	assert(PhoF!=NULL);
-	int curphon, curvec;
-	FILE *f=NULL;
-	char line[_LineLen], *p=NULL;
-	// initialize PhoDic;
-	_phon=malloc(_pho_number*sizeof(Phoneme)); assert(_phon!=NULL);
-	// read from PhoF;
-	if((f=fopen(PhoF,"r"))==NULL){ printf("Can't open %s\n", PhoF); exit(1); }
-	curphon=0;
-	while(!feof(f))
-    	{ fgets(line, _LineLen, f);
-		  _phon[curphon].name=strtok(line," ")[0];
-		  _phon[curphon].vec=malloc(_pho_features*sizeof(Real)); assert(_phon[curphon].vec!=NULL);
-		  curvec=0;
-		  while(p=strtok(NULL, " "))
-			{ _phon[curphon].vec[curvec]=atof(p); 
-			  curvec++;
-			}
-		  curphon++;
-		}
-	fclose(f);
-	/*
-	// print PhoDic
-	int i, j;
-	for(i=0;i<_pho_number;i++)
-		{ printf("Phoneme %c: ", _phon[i].name);
-		  for(j=0;j<_pho_features;j++)
-	  		printf("%2.1f ", _phon[i].vec[j]);
-	     	  printf("\n");
-		}
-	*/
-}
-
-void delete_phoneme(void)
-{ // delete phon;
-	int i;
-	for(i=0;i<_pho_number;i++)
-		{ free(_phon[i].vec); _phon[i].vec=NULL;
-		}
-	free(_phon); _phon=NULL;
 }

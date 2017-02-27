@@ -1,6 +1,6 @@
 // Network Parameters
-5	// int _tick_PtoP; number of ticks in one epoch (trial) of ptop training; different types of training can happen in different ticks; 
-7	// int _tick_OtoP; number of ticks in one epoch (trial) of otop training; different types of training can happen in different ticks;
+5	// int _tick_StoS; number of ticks in one epoch (trial) of ptop training; different types of training can happen in different ticks; 
+7	// int _tick_OtoS; number of ticks in one epoch (trial) of otop training; different types of training can happen in different ticks;
 0.25	// double _intconst; default value is 0.25;
 1	// int _tai; default value is 1
 5e-2	// double _epsi; episilon value for the activation curve; default value is 0.001;
@@ -13,25 +13,21 @@
 0.1	// double _errrad; error radius, errors less than it are counted as zero; default value is 0.1;
 0.1	// double _range; range of initial weights, the initially randomized weights are positive and negative _range;
 208	// int _OrthoS; size (number of nodes) of the orthographical layer;
-100	// int _HidS; size of the hidden layer between the orthographical and phonological layers;
-175	// int _PhonoS; size of the phonological layer; For Harm & Seidenberg 1999, 77 (7*11); For Harm 1998, 175 (7*25);
-20	// int _PhoHidS; size of the hidden layers between phonological layers, this is the cleanup layer;
-// Parameters for phonemes
-25	// int _pho_features; number of features in each phoneme; For Harm & Seidenberg 1999, 11; For Harm 1998, 25;
-39	// int _pho_number; number of phonemes in the dictionary; For Harm & Seidenberg 1999, 36 (24+11+1); For Harm 1998, 39 (24+10+4+1);
-// Parameters for file names storing phonological dictionary and training and testing examples
-./phon_Harm1998.txt	// char *_phoF; file name of the phoneme dictionary, which is a list of phonemes and their feature values;
-./TrEm5_PtoP_Harm1998.txt	// char *_exTrF_PtoP; file name of the training examples training phonological cleanup units; TrEM_PtoP_HarmSeidenberg1999.txt or TrEM_PtoP_Harm1998.txt; 
-./Te2_PtoP.txt	// char *_exTeF_PtoP; file name of the testing examples testing phonological cleanup units; TeEM_PtoP_HarmSeidenberg1999.txt or TeEM_PtoP_Harm1998.txt; 
-./TrEm5_Harm1998.txt	// char *_exTrF; file name of the training examples; TrEm_HarmSeidenberg1999.txt or TrEm_Harm1998.txt;
-./Te2.txt	// char *_exTeF; file name of the testing examples; TeEm_HarmSeidenberg1999.txt or TeEm_Harm1998.txt or TE.txt (for nonwords);
+100	// int _HidS; size of the hidden layer between the orthographical and semantic layers;
+50	// int _SemS; size of the semantic layer; 50, 100, 200, or 300;
+20	// int _SemHidS; size of the hidden layers between semantic layers, this is the cleanup layer;
+// Parameters for file names storing training and testing examples
+./Tr_50_StoS_log.txt	// char *_exTrF_StoS; file name of the training examples training semantic cleanup units; 
+./Tr_50_StoS_log.txt	// char *_exTeF_PtoP; file name of the testing examples testing semantic cleanup units;
+./Tr_50_OtoS_log.txt	// char *_exTrF; file name of the training examples;
+./Tr_50_OtoS_log.txt	// char *_exTeF; file name of the testing examples;
 // Parameters for running
 0	// unsigned int _seed; random seed for each run; if _seed=0, use random seed;
-1	// int _runmode; 0, directly OtoP training; 1, directly PtoP training; 2, OtoP training by loading weights from PtoP training results; 3, directly OtoP training with interleave PtoP training; 4, OtoP training interleaving with PtoP training by loading weights from PtoP training results;
+1	// int _runmode; 0, directly OtoS training; 1, directly StoS training; 2, OtoS training by loading weights from StoS training results; 3, directly OtoS training with interleave StoS training; 4, OtoS training interleaving with StoS training by loading weights from StoS training results;
 10000000	// unsigned int _iter; total number of training;
 1000	// unsigned int _rep; sampling frequency during training;
-1000000	// unsigned int _iter_ptop; total number of ptop training;
-1000	// unsigned int _rep_ptop; sampling frequency during ptop training;
+1000000	// unsigned int _iter_stos; total number of stos training;
+1000	// unsigned int _rep_stos; sampling frequency during stos training;
 1	// int _samp_method;	sampling method; linear (0) or logarithm-like (1) sampling;
 1	// int _v_method; method to translate ouput during training; based on smallest Euclidean-distance (0) or vector range (1);
 0.5	// double _v_thres; if _v_method=0, the threshold used for vector range method;

@@ -68,7 +68,7 @@ There are two ways of running the model:
    when calling the executable (OtoS): 
 
    ```
-   ./OtoS -seed SEED -runmode RUNMODE -iter ITER -rep REP -iter_stos ITERPtoP -rep_stos REPPtoP -samp SAMP -met MET -vthres VTHRES -recvec RECVEC
+   ./OtoS -seed SEED -runmode RUNMODE -iter ITER -rep REP -iter_stos ITERPtoP -rep_stos REPPtoP -samp SAMP -vthres VTHRES
    ```
 
    There are default values for each argument, so one can
@@ -89,17 +89,8 @@ There are two ways of running the model:
    * SAMP: sampling method (0: liner; 1: logarithm-like). If SAMP is
      set to 1, REP is no longer useful. Default value is 0;
 
-   * MET: method for determining which phonemen matches the
-     activation: 0: use the smallest vector-based Euclidean distance
-     between the output and the phoneme; 1, determines whether the bit
-     differences between the output and the phonemen are all within
-     certain threshold (VTHRES). Default value is 0;
-
-   * VTHRES: if MET is 1, the bit difference threshold for determining
-     which phoneme matches the activation. Default value is 0.5;
+   * VTHRES: the bit difference threshold for determining which phoneme matches the activation. Default value is 0.5;
      
-   * RECVEC: whether (1) or not (0) record vector values of the output semantics of training and testing examples. Defaluse value is 0;  
-
    The executable will prompt the user to input an integer, which will
    be used as a folder name. Files containing the information about the simulation results
    will be stored there.
@@ -140,14 +131,6 @@ There are two ways of running the model:
    
    * outsemTe\_stos.txt: semantics activated for each StoS testing example at each sampling point;
    
-   * outsemTrVec.txt: vector values of activation for each OtoS training example at each sampling point. This file is created when RECVEC is 1;
-   
-   * outsemTeVec.txt: vector values of activation for each OtoS testing example at each sampling point. This file is created when RECVEC is 1;
-
-   * outsemTrVec\_stos.txt: vector values of activation for each StoS training example at each sampling point. This file is created when RECVEC is 1;
-   
-   * outsemTeVec\_stos.txt: vector values of activation for each StoS testing example at each sampling point. This file is created when RECVEC is 1;
-   
    While the model runs, it will also print to the screen overall
    error and average training/testing accuracies at each sampling
    point. Sampling points are places where the performances of 
@@ -164,7 +147,7 @@ There are two ways of running the model:
    serially, and store the results in the corresponding subfolders (1
    to N, N is the number of runs preset).
 
-   type: `sh SerRunLoc.sh NUM RUNMODE LOG ITER REP ITERStoS REPStoS SAMP MET VTHRES RECVEC`
+   type: `sh SerRunLoc.sh NUM RUNMODE LOG ITER REP ITERStoS REPStoS SAMP VTHRES`
 
    * NUM: number of runs to be conducted, each using a different
      random seed. This argument must be given;
@@ -245,7 +228,7 @@ into an executable.
 5. You can check job status thus: 
    ```
    bjobs; To kill a job: $ bkill job_ID
-    ```
+   ```
 
 ### Using Omega
 
