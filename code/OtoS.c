@@ -191,8 +191,7 @@ Real getacu(Net *net, ExampleSet *examples, int ticks, int iter, FILE *f1, char 
 { // calculate accuracy of the network during otop training;
 	assert(net!=NULL); assert(examples!=NULL); assert(ticks!=0);
 	assert(f1!=NULL); assert(f2!=NULL); assert(fName1!=NULL); assert(fName2!=NULL); 
-	if(_recVec==1) { assert(f3!=NULL); assert(fName3!=NULL); }
-	assert(f4!=NULL); assert(fName4!=NULL);
+	assert(f3!=NULL); assert(fName3!=NULL);
 	int i, j;
 	Example *ex=NULL;
   	Real *target=NULL, *out=NULL, accu, itemaccu, avgaccu, error, itemerror, avgerror;
@@ -488,7 +487,7 @@ void setResF(char *subDirect, char **weightF, FILE **f1, char **outF, FILE **f2,
 		  		setF(outSemTeF, subDirect, "outsemTe.txt", f6, "ITER\tNoItem", "\tSem%d", test_exm->numExamples, "\n");
 		  		// record output errors of semantics;
 				setF(outSemErrTrF, subDirect, "outsemErrTr.txt", f7, "ITER\tNoItem", "\tErr%d", train_exm->numExamples, "\tAvg\n");		  
-		  	  	setF(outSemErrTeF, subDirect, "outsemErrTe.txt", f10, "ITER\tNoItem", "\tErr%d", test_exm->numExamples, "\tAvg\n");
+		  	  	setF(outSemErrTeF, subDirect, "outsemErrTe.txt", f8, "ITER\tNoItem", "\tErr%d", test_exm->numExamples, "\tAvg\n");
 				break;
 		  case 1: 
 		  		// record connection weights of the network;
@@ -578,8 +577,7 @@ void main(int argc,char *argv[])
 
 	announce_version(); setbuf(stdout, NULL); 
 	mikenet_set_seed(_seed);	// set up seed for mikenet
-	load_phoneme(_phoF);	// initialize phonemes;
-
+	
 	switch(_runmode)
 		{ case 0: case 2: case 3: case 4: 
 				// scratch OtoS training (_runmode==0 or _runmode==3); OtoS training by loading weights from StoS training network (_runmode==2 or _runmode==4);

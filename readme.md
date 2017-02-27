@@ -130,6 +130,10 @@ There are two ways of running the model:
    * outsemTr\_stos.txt: semantics activated for each StoS training example at each sampling point;
    
    * outsemTe\_stos.txt: semantics activated for each StoS testing example at each sampling point;
+      
+   * outsemErrTr.txt: activation error for each OtoS training example at each sampling point.
+   
+   * outsemErrTe.txt: activation error for each OtoS training example at each sampling point.
    
    While the model runs, it will also print to the screen overall
    error and average training/testing accuracies at each sampling

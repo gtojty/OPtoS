@@ -23,12 +23,10 @@
 ./Tr_50_OtoS_log.txt	// char *_exTeF; file name of the testing examples;
 // Parameters for running
 0	// unsigned int _seed; random seed for each run; if _seed=0, use random seed;
-1	// int _runmode; 0, directly OtoS training; 1, directly StoS training; 2, OtoS training by loading weights from StoS training results; 3, directly OtoS training with interleave StoS training; 4, OtoS training interleaving with StoS training by loading weights from StoS training results;
+0	// int _runmode; 0, directly OtoS training; 1, directly StoS training; 2, OtoS training by loading weights from StoS training results; 3, directly OtoS training with interleave StoS training; 4, OtoS training interleaving with StoS training by loading weights from StoS training results;
 10000000	// unsigned int _iter; total number of training;
 1000	// unsigned int _rep; sampling frequency during training;
 1000000	// unsigned int _iter_stos; total number of stos training;
 1000	// unsigned int _rep_stos; sampling frequency during stos training;
 1	// int _samp_method;	sampling method; linear (0) or logarithm-like (1) sampling;
-1	// int _v_method; method to translate ouput during training; based on smallest Euclidean-distance (0) or vector range (1);
 0.5	// double _v_thres; if _v_method=0, the threshold used for vector range method;
-0	// int _recVec; whether recording output and hidden layers' vectors (1) or not (0);
