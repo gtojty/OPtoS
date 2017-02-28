@@ -1,9 +1,10 @@
 // Network Parameters
-5	// int _tick_StoS; number of ticks in one epoch (trial) of ptop training; different types of training can happen in different ticks; 
-7	// int _tick_OtoS; number of ticks in one epoch (trial) of otop training; different types of training can happen in different ticks;
+1	// int _SimType; type of simulation; 0, OtoS; 1, PtoS;
+5	// int _tick_StoS; number of ticks in one epoch (trial) of stos training; different types of training can happen in different ticks; 
+7	// int _tick_OPtoS; number of ticks in one epoch (trial) of optos training; different types of training can happen in different ticks;
 0.25	// double _intconst; default value is 0.25;
 1	// int _tai; default value is 1
-5e-2	// double _epsi; episilon value for the activation curve; default value is 0.001;
+1e-1	// double _epsi; episilon value for the activation curve; default value is 0.001;
 0	// int _acttype; LOGISTIC_ACTIVATION (0) (Harm 1998), TANH_ACTIVATION (1) (Harm & Seidenberg 1999), FAST_LOGISTIC_ACTIVATION (2), LINEAR_ACTIVATION (3), or STEP_ACTIVATION (4)
 1	// int _errortype; SUM_SQUARED_ERROR (1) or CROSS_ENTROPY_ERROR (2)
 0	// int _weightnoisetype; NO_NOISE (0), ADDITIVE_NOISE (1), or MULTIPLICATIVE_NOISE (2)
@@ -12,21 +13,22 @@
 0.0	// double _inputnoise; input noise;
 0.1	// double _errrad; error radius, errors less than it are counted as zero; default value is 0.1;
 0.1	// double _range; range of initial weights, the initially randomized weights are positive and negative _range;
-208	// int _OrthoS; size (number of nodes) of the orthographical layer;
+175	// int _OrthoPhonS; size (number of nodes) of the orthographical (208: 26*8) / phonological (175: 25*7) layer;
 100	// int _HidS; size of the hidden layer between the orthographical and semantic layers;
 50	// int _SemS; size of the semantic layer; 50, 100, 200, or 300;
 20	// int _SemHidS; size of the hidden layers between semantic layers, this is the cleanup layer;
 // Parameters for file names storing training and testing examples
 ./Tr_50_StoS_log.txt	// char *_exTrF_StoS; file name of the training examples training semantic cleanup units; 
 ./Tr_50_StoS_log.txt	// char *_exTeF_PtoP; file name of the testing examples testing semantic cleanup units;
-./Tr_50_OtoS_log.txt	// char *_exTrF; file name of the training examples;
-./Tr_50_OtoS_log.txt	// char *_exTeF; file name of the testing examples;
+./Tr_50_PtoS_log.txt	// char *_exTrF; file name of the training examples;
+./Tr_50_PtoS_log.txt	// char *_exTeF; file name of the testing examples;
 // Parameters for running
 0	// unsigned int _seed; random seed for each run; if _seed=0, use random seed;
-0	// int _runmode; 0, directly OtoS training; 1, directly StoS training; 2, OtoS training by loading weights from StoS training results; 3, directly OtoS training with interleave StoS training; 4, OtoS training interleaving with StoS training by loading weights from StoS training results;
+0	// int _runmode; 0, directly OPtoS training; 1, directly StoS training; 2, OPtoS training by loading weights from StoS training results; 3, directly OPtoS training with interleave StoS training; 4, OPtoS training interleaving with StoS training by loading weights from StoS training results;
 10000000	// unsigned int _iter; total number of training;
 1000	// unsigned int _rep; sampling frequency during training;
 1000000	// unsigned int _iter_stos; total number of stos training;
 1000	// unsigned int _rep_stos; sampling frequency during stos training;
 1	// int _samp_method;	sampling method; linear (0) or logarithm-like (1) sampling;
-0.5	// double _v_thres; if _v_method=0, the threshold used for vector range method;
+1	// int _v_method; method to translate ouput during training; based on smallest Euclidean-distance (0) or vector range (1);
+0.5	// double _v_thres; if _v_method=1, the threshold used for vector range method;

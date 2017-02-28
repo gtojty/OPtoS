@@ -31,7 +31,8 @@ void build_model(int ticks)
 	default_errorRadius=_errrad;
 
 	/* create our groups. format is: name, num of units,  ticks */
-  	input=init_group("Ortho",_OrthoS,ticks);
+  	if(_SimType==0) input=init_group("Ortho",_OrthoPhonS,ticks);
+	else if(_SimType==1) input=init_group("Phono",_OrthoPhonS,ticks);
   	hidden=init_group("Hidden",_HidS,ticks);
   	output=init_group("Sem",_SemS,ticks);
   	semhid=init_group("SemHid",_SemHidS,ticks);

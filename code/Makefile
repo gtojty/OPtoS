@@ -43,10 +43,10 @@ SPECIAL=
 LIBHOME=${MIKENET_DIR}/lib/${ARCH}/
 INCLUDEHOME=${MIKENET_DIR}/include
 
-all:	OtoS 
+all:	OPtoS 
 
-OtoS:	OtoS.c model.c Makefile
-	gcc -o OtoS OtoS.c model.c ${DEBUG} -I${INCLUDEHOME} ${LIBHOME}/libmikenet.a -lm
+OPtoS:	OPtoS.c model.c Makefile
+	gcc -o OPtoS OPtoS.c model.c ${DEBUG} -I${INCLUDEHOME} ${LIBHOME}/libmikenet.a -lm
 
 clean:
-	rm -f *.o OtoS
+	rm -f *.o OPtoS

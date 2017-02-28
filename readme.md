@@ -7,7 +7,7 @@ output: pdf_document
 
 This repository contains code for a neural network (implemented in
 [Mikenet](http://www.cnbc.cmu.edu/~mharm/research/tools/mikenet/))
-that learns Orthography to Semantics mappings.
+that learns Orthography/Phonology to Semantics mappings.
 
 The rest sketches how to compile and run the simulation in three
 contexts: on a local workstation; on the Yale HPC's Grace cluster; on
@@ -22,19 +22,19 @@ and installation packages there for installation issues of Mikenet.
 #### Compilation
 
 The codes for the model is in the folder ./code. The model is compiled and run under Linux (Mint 17), with Mikenet package is installed. The source codes include: model.h, model.c, and
-OtoS.c.
+OPtoS.c.
 
-The model implements a multi-layer neural network from orthography to phonology. The model can be trained in two aspects: training the mapping from orthography to semantics (OtoS) and training the cleanup units in a hidden layer between the semantics output layer and itself (StoS). The second type of trainning can occur before the first type of training, by setting related parameters during the running of the model. 
+The model implements a multi-layer neural network from orthography to phonology. The model can be trained in two aspects: training the mapping from orthography/phonology to semantics (OPtoS) and training the cleanup units in a hidden layer between the semantics output layer and itself (StoS). The second type of trainning can occur before the first type of training, by setting related parameters during the running of the model. 
 
 To compile an executable file, type: `make -f Makefile` in command
-line. This will generate the exe file called *OtoS*.
+line. This will generate the exe file called *OPtoS*.
 
 To clean previous exe file, type: `make -f Makefile clean`. This step
 is optional.
 
 #### Running the Simulation
 
-In order to run a simulation, put the exe file (OtoS), parameter file
+In order to run a simulation, put the exe file (OPtoS), parameter file
 (para.txt), and training and testing examples (Tr#.txt and Te#.txt, see ./SemDict) 
 into the same directory.
 
@@ -62,21 +62,21 @@ The parameters for running can also be assigned using the shell command based on
 
 There are two ways of running the model:
 
-1. Using exe file, type: ./OtoS. 
+1. Using exe file, type: ./OPtoS. 
 
    One can specify some model parameters for running as command line arguments
-   when calling the executable (OtoS): 
+   when calling the executable (OPtoS): 
 
    ```
-   ./OtoS -seed SEED -runmode RUNMODE -iter ITER -rep REP -iter_stos ITERPtoP -rep_stos REPPtoP -samp SAMP -vthres VTHRES
+   ./OPtoS -seed SEED -runmode RUNMODE -iter ITER -rep REP -iter_stos ITERPtoP -rep_stos REPPtoP -samp SAMP -met MET -vthres VTHRES
    ```
 
    There are default values for each argument, so one can
-   specify all or only some of them. Specifying these parameters can be done either in para.txt or via the above arguments when calling the executable (OtoS). All the arguments are optional. If no arguments are provided, the code will use the values set in para.txt.
+   specify all or only some of them. Specifying these parameters can be done either in para.txt or via the above arguments when calling the executable (OPtoS). All the arguments are optional. If no arguments are provided, the code will use the values set in para.txt.
 
    * SEED: random seed to be used in that run. Default value is 0 (randomly assigning a seed during the run);
 
-   * RUNMODE: mode of running: 0, directly OtoS training; 1, directly StoS training; 2, OtoS training after StoS training;
+   * RUNMODE: mode of running: 0, directly OPtoS training; 1, directly StoS training; 2, OPtoS training after StoS training; 3, directly OPtoS training with interleave StoS training; 4, OPtoS training interleaving with StoS training by loading weights from StoS training results;
    
    * ITER: number of total iterations (trainings). Default value is 50000;
 
@@ -89,6 +89,12 @@ There are two ways of running the model:
    * SAMP: sampling method (0: liner; 1: logarithm-like). If SAMP is
      set to 1, REP is no longer useful. Default value is 0;
 
+   * MET: method for determining which phonemen matches the
+     activation: 0: use the smallest vector-based Euclidean distance
+     between the output and the phoneme; 1, determines whether the bit
+     differences between the output and the phonemen are all within
+     certain threshold (VTHRES). Default value is 0;
+   
    * VTHRES: the bit difference threshold for determining which phoneme matches the activation. Default value is 0.5;
      
    The executable will prompt the user to input an integer, which will
@@ -100,17 +106,17 @@ There are two ways of running the model:
    * weights.txt.gz: zipped connection weights of the trained
      network;
      
-   * weights\_stos.txt.gz: zipped connection weights of the trained network after StoS training; These connection weights will be loaded before OtoS training. This file is created when StoS training is included (by setting STOS to 1 during running or setting _stos to 1 in para.txt);
+   * weights\_stos.txt.gz: zipped connection weights of the trained network after StoS training; These connection weights will be loaded before OPtoS training. This file is created when StoS training is included (by setting STOS to 1 during running or setting _stos to 1 in para.txt);
 
    * output.txt: network training errors and training and testing accuracies at
      each sampling point of the OtoS training;
   
    * output\_stos.txt: network training errors and training accuracies at each sampling point of the StoS training. This file is created when StoS training is included (by setting RUNMODE to 1 during running or setting _runmode to 1 in para.txt);
 
-   * itemacu\_tr.txt: item-based OtoS accuracy based on the training data
+   * itemacu\_tr.txt: item-based OPtoS accuracy based on the training data
      (training\_examples.txt) at each sampling point;
 
-   * itemacu\_te.txt: item-based OtoS accuracy based on the testing data
+   * itemacu\_te.txt: item-based OPtoS accuracy based on the testing data
      (so far same as the training data) at each sampling point;
      
    * itemacu\_tr\_stos.txt: item-based StoS accuracy based on the training data
@@ -119,21 +125,21 @@ There are two ways of running the model:
    * itemacu\_te\_stos.txt: item-based StoS accuracy based on the testing data
      (so far same as the training data) at each sampling point;   
      
-   * trainfreq.txt: the accumulated number of times each training example is chosen for OtoS training at each sampling point;
+   * trainfreq.txt: the accumulated number of times each training example is chosen for OPtoS training at each sampling point;
    
    * trainfreq\_stos.txt: the accumulated number of times each training example is chosen for StoS training at each sampling point;
    
-   * outsemTr.txt: semantics activated for each OtoS training example at each sampling point;
+   * outsemTr.txt: semantics activated for each OPtoS training example at each sampling point;
    
-   * outsemTe.txt: semantics activated for each OtoS testing example at each sampling point;
+   * outsemTe.txt: semantics activated for each OPtoS testing example at each sampling point;
    
    * outsemTr\_stos.txt: semantics activated for each StoS training example at each sampling point;
    
    * outsemTe\_stos.txt: semantics activated for each StoS testing example at each sampling point;
       
-   * outsemErrTr.txt: activation error for each OtoS training example at each sampling point.
+   * outsemErrTr.txt: activation error for each OPtoS training example at each sampling point.
    
-   * outsemErrTe.txt: activation error for each OtoS training example at each sampling point.
+   * outsemErrTe.txt: activation error for each OPtoS training example at each sampling point.
    
    While the model runs, it will also print to the screen overall
    error and average training/testing accuracies at each sampling
@@ -151,7 +157,7 @@ There are two ways of running the model:
    serially, and store the results in the corresponding subfolders (1
    to N, N is the number of runs preset).
 
-   type: `sh SerRunLoc.sh NUM RUNMODE LOG ITER REP ITERStoS REPStoS SAMP VTHRES`
+   type: `sh SerRunLoc.sh NUM RUNMODE LOG ITER REP ITERStoS REPStoS SAMP MET VTHRES`
 
    * NUM: number of runs to be conducted, each using a different
      random seed. This argument must be given;
@@ -197,10 +203,10 @@ into an executable.
    cd ~/workDirec; ./msf.sh 4 1 _StoS; ./msf.sh 4 2 _OtoS
    ```
 
-   And so on. *mode* here could be \_OtoS or \_StoS\_OtoS. 
+   And so on. *mode* here could be \_OtoS, \_PtoS, or \_StoS\_OtoS, \_StoS\_PtoS. 
 
    As shown, this example would run 4 simulations, each first having StoS training 
-   and then having OtoS training.
+   and then having OPtoS training.
 
    You can use a command like the following to automatically generate
    tasklist.txt:
@@ -214,7 +220,7 @@ into an executable.
    * WORKDIREC: working directory of the code. Once the code is running, 
      subfolders will be created here for storing results. This argument must be given;
 
-   * RUNMODE1 and LOG1: specify the runmode and log file name; If there are only RUNMODE1 and LOG1 specified, the created tasklist file will be tasklist\_LOG2.txt; if RUNMODE1, LOG1, RUNMODE2, LOG2 are all specified, the created tasklist file will be tasklist\_StoS\_OtoS.txt.
+   * RUNMODE1 and LOG1: specify the runmode and log file name; If there are only RUNMODE1 and LOG1 specified, the created tasklist file will be tasklist\_LOG2.txt; if RUNMODE1, LOG1, RUNMODE2, LOG2 are all specified, the created tasklist file will be tasklist\_StoS\_OtoS.txt or tasklist\_StoS\_PtoS.txt.
    
    * RUNMODE2 and LOG2: same as above, but they are used to specify the second msf.sh command. These two arguments are optional. 
 	 

@@ -1,4 +1,4 @@
-module load Langs/GCC/4.5.3; cd ~/MikeNet_new; ./msf.sh 1 0 _OtoS
-module load Langs/GCC/4.5.3; cd ~/MikeNet_new; ./msf.sh 2 0 _OtoS
-module load Langs/GCC/4.5.3; cd ~/MikeNet_new; ./msf.sh 3 0 _OtoS
-module load Langs/GCC/4.5.3; cd ~/MikeNet_new; ./msf.sh 4 0 _OtoS
+module load Langs/GCC/4.5.3; cd ~/MikeNet_OPS; ./msf.sh 1 0 _OtoS
+module load Langs/GCC/4.5.3; cd ~/MikeNet_OPS; ./msf.sh 2 0 _OtoS
+module load Langs/GCC/4.5.3; cd ~/MikeNet_OPS; ./msf.sh 3 0 _OtoS
+module load Langs/GCC/4.5.3; cd ~/MikeNet_OPS; ./msf.sh 4 0 _OtoS

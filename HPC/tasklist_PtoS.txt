@@ -1,0 +1,8 @@
+cd /home/fas/braze/tg422/MikeNet_OPS/ ; ./msf.sh 1 0 _PtoS
+cd /home/fas/braze/tg422/MikeNet_OPS/ ; ./msf.sh 2 0 _PtoS
+cd /home/fas/braze/tg422/MikeNet_OPS/ ; ./msf.sh 3 0 _PtoS
+cd /home/fas/braze/tg422/MikeNet_OPS/ ; ./msf.sh 4 0 _PtoS
+cd /home/fas/braze/tg422/MikeNet_OPS/ ; ./msf.sh 5 0 _PtoS
+cd /home/fas/braze/tg422/MikeNet_OPS/ ; ./msf.sh 6 0 _PtoS
+cd /home/fas/braze/tg422/MikeNet_OPS/ ; ./msf.sh 7 0 _PtoS
+cd /home/fas/braze/tg422/MikeNet_OPS/ ; ./msf.sh 8 0 _PtoS
