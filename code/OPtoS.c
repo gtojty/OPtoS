@@ -12,6 +12,9 @@
 
 #define _FileLen 100
 #define _Rand0_1 rand()/(RAND_MAX+1.0)
+#define _One 1.0
+#define _Zero 0.0
+#define _Half 0.5
 
 // parameters for recording timepoints, total iteration, and seed;
 unsigned int _seed=0;
@@ -102,7 +105,11 @@ void readpara(void)
 	get_int(f, &_SemS);	// read _SemS; size of the semantic layer; 50, 100, 200, 300;
 	get_int(f, &_SemHidS);	// read _SemHidS; size of the hidden layers between semantic layers, this is the cleanup layer;
 
+	fgets(line, _LineLen, f);	// read: // Parameters for semantics
+	get_int(f, &_sem_number);	// read  _sem_number; number of semantics in the dictionary; 
+	
 	fgets(line, _LineLen, f);	// read: // Parameters for file names storing training and testing examples
+	get_string(f, &_semF);	// read _semF; file name of the semantics dictionary, which is a list of semantics and their feature values;
 	get_string(f, &_exTrF_StoS);	// read _exTrF_StoS; file name of the training examples training semantic cleanup units; 
 	get_string(f, &_exTeF_StoS);	// read _exTeF_StoS; file name of the testing examples testing semantic cleanup units; 
 	get_string(f, &_exTrF);	// read _exTrF; file name of the training examples; 
@@ -142,6 +149,9 @@ void readpara(void)
 	printf("SemS=%d\n", _SemS);	// read _SemS; size of the semantic layer; 50, 100, 200, 300;
 	printf("SemHidS=%d\n", _SemHidS);	// read _SemHidS; size of the hidden layers between semantic layers, this is the cleanup layer;
 
+	printf("sem_number=%d\n", _sem_number);	// read _sem_number; number of semantics in the dictionary;
+
+	printf("semF=%s\n", _semF); 	// read _semF; file name of the semantics dictionary, which is a list of semantics and their feature values;
 	printf("exTrF_StoS=%s\n", _exTrF_StoS);	// read _exTrF_StoS; file name of the training examples training semantic cleanup units; 
 	printf("exTeF_StoS=%s\n", _exTeF_StoS);	// read _exTeF_StoS; file name of the testing examples testing semantic cleanup units; 
 	printf("exTrF=%s\n", _exTrF); // read _exTrF; file name of the training examples;
@@ -177,19 +187,115 @@ void readarg(int argc,char *argv[])
 }
 
 // functions for the network training;
-Real calacu(Real *out, Real *target)
-{ // calculate accuracy by comparing out with target;
-	assert(out!=NULL); assert(target!=NULL); 
-	int i, same, NoAccu;
-	// check correct translation
-	NoAccu=0;
+float euclid_dist(Real *x1, Real *x2)
+{ // calculate euclidean distance between two vectors x1 and x2;
+	assert(x1!=NULL); assert(x2!=NULL);
+	int i;
+  	float dist=0.0;
+  	for(i=0;i<_SemS;i++)
+    	dist+=(x1[i]-x2[i])*(x1[i]-x2[i]);
+  	return dist;
+}
+
+int vect_check(Real *x1, Real *x2)
+{ // check vector's bit-based threshold between two vectors x1 and x2;
+	assert(x1!=NULL); assert(x2!=NULL);
+	int i, inThres=1;
 	for(i=0;i<_SemS;i++)
-		{ same=1;
-		  if(fabs(out[i]-target[i])>=_v_thres) same=0;
-		  if(same==1) NoAccu++;
+		{ if(fabs(x1[i]-x2[i])>=_v_thres) { inThres=0; break; }
 		}
-	if(NoAccu/(float)(_SemS)<1.0) return 0.0;
-	else return 1.0;
+	return inThres;
+}
+
+char * getsem(Real *vect, Real *trans)
+{ // find semantic matching vect; 
+	assert(vect!=NULL); assert(trans!=NULL); 
+	int i, j, ind, MaxDist, numInThres, *InThresSet=NULL, curind;
+	char *curSem=NULL;
+	
+	switch(_v_method)
+		{ case 0: // using semantics with smallest Euclidean distance to vect as trans;
+		  		ind=-1; MaxDist=1e6;
+		  		for(i=0;i<_sem_number;i++)
+					{ if(euclid_dist(vect,_sem[i].vec)<=MaxDist) { ind=i; MaxDist=euclid_dist(vect,_sem[i].vec); }
+					}
+		  		assert(ind!=-1);
+		  		for(i=0;i<_SemS;i++)
+					trans[i]=_sem[ind].vec[i];
+				curSem=_sem[ind].name;
+				break;
+		  case 1: // using phoneme with 0.5 threshold to set trans;
+		  		numInThres=0;
+		  		for(i=0;i<_sem_number;i++)
+					{ if(vect_check(vect,_sem[i].vec)) numInThres++;
+		  			}
+				if(numInThres==0)
+					{ // no such semantics;
+		  	  		  for(i=0;i<_SemS;i++)
+						trans[i]=-2.0;
+					}
+		  		else if(numInThres==1)
+					{ // there is only one semantics that matches this requirement;
+			  		  for(i=0;i<_sem_number;i++)
+						{ if(vect_check(vect,_sem[i].vec))
+							{ for(j=0;j<_SemS;j++)
+								trans[j]=_sem[i].vec[j];
+							  curSem=_sem[i].name;
+							  break;
+							}
+						}
+					}
+		  		else
+					{ // there are more than one phoneme that match this requirement, randomly select one!
+			  		  InThresSet=malloc(numInThres*sizeof(int)); assert(InThresSet!=NULL);
+			  		  curind=0;
+			  		  for(i=0;i<_sem_number;i++)
+						{ if(vect_check(vect,_sem[i].vec)) { InThresSet[curind]=i; curind++; }
+						}
+			  		  ind=(int)(_Rand0_1*numInThres);
+			  		  for(i=0;i<_SemS;i++)
+						trans[i]=_sem[InThresSet[ind]].vec[i];
+			  		  curSem=_sem[InThresSet[ind]].name;
+					  free(InThresSet); InThresSet=NULL;
+					}
+				break;
+		 default: break;		
+		}
+	return(curSem);
+}
+
+Real calacu(Real *out, Real *target, char *transSem)
+{ // calculate accuracy by comparing out with target;
+	assert(out!=NULL); assert(target!=NULL);
+	int i, j, same, NoAccu, ind;
+	float MaxDist;
+	Example *ex=NULL;
+	Real *trans=NULL;	// store translated output;
+	
+	// initialize trans;
+	trans=malloc(_SemS*sizeof(Real)); assert(trans!=NULL); 
+	for(i=0;i<_SemS;i++) 
+		trans[i]=0.0;
+
+	// translate out to trans
+	transSem=getsem(out, trans);
+	
+	// check correct translation
+	if(transSem==NULL) return 0.0;
+	else
+		{ NoAccu=0;
+		  for(i=0;i<_SemS;i++)
+			{ same=1;
+			  if(trans[i]!=target[i]) same=0;
+			  if(same==1) NoAccu++;
+			}
+
+		  // free trans;
+		  free(trans); trans=NULL;
+
+		  if(NoAccu/(float)(_SemS)<1.0) return 0.0;
+		  else return 1.0;
+		}
 }
 
 Real getacu(Net *net, ExampleSet *examples, int ticks, int iter, FILE *f1, char *fName1, FILE *f2, char *fName2, FILE *f3, char *fName3)
@@ -200,6 +306,7 @@ Real getacu(Net *net, ExampleSet *examples, int ticks, int iter, FILE *f1, char 
 	int i, j;
 	Example *ex=NULL;
   	Real *target=NULL, *out=NULL, accu, itemaccu, avgaccu, error, itemerror, avgerror;
+	char *transSem=NULL;	// record translated semantics;
 	
 	if((f1=fopen(fName1,"a+"))==NULL) { printf("Can't open %s\n", fName1); exit(1); }
 	fprintf(f1,"%d\t%d", iter, examples->numExamples);
@@ -224,16 +331,17 @@ Real getacu(Net *net, ExampleSet *examples, int ticks, int iter, FILE *f1, char 
 			  target[j]=get_value(ex->targets,output->index,ticks-1,j);	// get target from the example;
 			}		  
 		  
-		  itemaccu=calacu(out,target);	// caculate item accuracy;
+		  itemaccu=calacu(out,target,transSem);	// caculate item accuracy;
 		  accu+=itemaccu;	// accumulate item accuracy;
 
 		  // record results to files;
 		  fprintf(f1,"\t%5.3f", itemaccu);	// record item accuracy;
-		  
+		  fprintf(f2,"\t%s", transSem);	// record translated semantics;
+		  transSem=NULL;
 		  fprintf(f3, "\t%5.3f", itemerror);	// record item summed square error;
 		  
 		  free(out); out=NULL; free(target); target=NULL;	// release memory for out and target;
-    	}
+		}
 	avgerror=error/(float)(examples->numExamples);	// calculate average error;
 	avgaccu=accu/(float)(examples->numExamples);	// calculate average accuracy;
 
@@ -367,8 +475,8 @@ void train(Net *net, FILE *f1, char *fName1, FILE *f2, char *fName2, FILE *f3, c
 		  case 1:
 		  		// scratch StoS training;
 		  		// initialize trainAct;
-				trainAct=malloc(train_StoS_exm->numExamples*sizeof(int)); assert(trainAct!=NULL); 
-		  		for(i=0;i<train_StoS_exm->numExamples;i++) 
+		  		trainAct=malloc(train_StoS_exm->numExamples*sizeof(int)); assert(trainAct!=NULL); 
+				for(i=0;i<train_StoS_exm->numExamples;i++) 
 					trainAct[i]=0;
 				// set totiter and sep;
 		  		totiter=_iter_stos; rep=_rep_stos;
@@ -508,8 +616,8 @@ void setResF(char *subDirect, char **weightF, FILE **f1, char **outF, FILE **f2,
 		  		setF(outSemTrF, subDirect, "outsemTr_stos.txt", f5, "ITER\tNoItem", "\tSem%d", train_StoS_exm->numExamples, "\n");
 		  		setF(outSemTeF, subDirect, "outsemTe_stos.txt", f6, "ITER\tNoItem", "\tSem%d", test_StoS_exm->numExamples, "\n");
 		  		// record output errors of semantics;
-				setF(outSemErrTrF, subDirect, "outsemErrTr.txt", f7, "ITER\tNoItem", "\tErr%d", train_exm->numExamples, "\tAvg\n");		  
-		  	  	setF(outSemErrTeF, subDirect, "outsemErrTe.txt", f8, "ITER\tNoItem", "\tErr%d", test_exm->numExamples, "\tAvg\n");
+				setF(outSemErrTrF, subDirect, "outsemErrTr.txt", f7, "ITER\tNoItem", "\tErr%d", train_StoS_exm->numExamples, "\tAvg\n");		  
+		  	  	setF(outSemErrTeF, subDirect, "outsemErrTe.txt", f8, "ITER\tNoItem", "\tErr%d", test_StoS_exm->numExamples, "\tAvg\n");
 				break;
 		  default: break;		
 		}
@@ -549,9 +657,15 @@ void storeSeed(char *subDirect)
 { // store seed to seed.txt;
 	FILE *f=NULL;
 	char *fName=NULL, *seedDirect=NULL;
-	if(_runmode==0) { fName=malloc((strlen("seed_OPtoS.txt")+1)*sizeof(char)); assert(fName!=NULL); strcpy(fName, "seed_OPtoS.txt"); }
-	else if(_runmode==1) { fName=malloc((strlen("seed_StoS.txt")+1)*sizeof(char)); assert(fName!=NULL); strcpy(fName, "seed_StoS.txt");	}
-	else { fName=malloc((strlen("seed_StoS_OPtoS.txt")+1)*sizeof(char)); assert(fName!=NULL); strcpy(fName, "seed_StoS_OPtoS.txt"); }
+	if(_runmode==0)
+		{ if(_SimType==0) { fName=malloc((strlen("seed_OtoS.txt")+1)*sizeof(char)); assert(fName!=NULL); strcpy(fName, "seed_OtoS.txt"); } 
+		  else if(_SimType==1) { fName=malloc((strlen("seed_PtoS.txt")+1)*sizeof(char)); assert(fName!=NULL); strcpy(fName, "seed_PtoS.txt"); } 	
+		}
+	else if(_runmode==1) { fName=malloc((strlen("seed_StoS.txt")+1)*sizeof(char)); assert(fName!=NULL); strcpy(fName, "seed_StoS.txt"); }
+	else
+		{ if(_SimType==0) { fName=malloc((strlen("seed_StoS_OtoS.txt")+1)*sizeof(char)); assert(fName!=NULL); strcpy(fName, "seed_StoS_OtoS.txt"); } 
+		  else if(_SimType==1) { fName=malloc((strlen("seed_StoS_PtoS.txt")+1)*sizeof(char)); assert(fName!=NULL); strcpy(fName, "seed_StoS_PtoS.txt"); } 
+		}
 	seedDirect=malloc((strlen(subDirect)+strlen(fName)+1)*sizeof(char)); assert(seedDirect!=NULL);
 	strcpy(seedDirect, subDirect); strcat(seedDirect, fName);
 	if((f=fopen(seedDirect,"w"))==NULL) { printf("Can't create %s\n", seedDirect); exit(1); } 
@@ -582,15 +696,17 @@ void main(int argc,char *argv[])
 
 	announce_version(); setbuf(stdout, NULL); 
 	mikenet_set_seed(_seed);	// set up seed for mikenet
-		
+	load_sem(_semF);	// initialize phonemes;
+
 	switch(_runmode)
 		{ case 0: case 2: case 3: case 4: 
 				// scratch OPtoS training (_runmode==0 or _runmode==3); OPtoS training by loading weights from StoS training network (_runmode==2 or _runmode==4);
 		  	 	// 1) build network;
 		  	 	if(_SimType==0) printf("Build OtoS network:\n");
 				else if(_SimType==1) printf("Build PtoS network:\n"); 
+				printf("step1\n");
 		  		build_model(_tick_OPtoS); printf("No. Conns: %d\n", count_connections(reading));  // calculate number of connections and print out;
-		  		if((_runmode==2)||(_runmode==4))
+				if((_runmode==2)||(_runmode==4))
 					{ // load weights from previously trained StoS network;
 		  	  		  crtFName(&weightF, subDirect, "weights_stos.txt");
 			  		  load_weights(reading, weightF); //another option: load_binary_weights(reading, weightF);
@@ -664,6 +780,7 @@ void main(int argc,char *argv[])
 		}
 	// 8) free network and phon dictionary
 	free_net(reading); reading=NULL;
+	delete_sem();	// empty _sem;
 	
 	free(subDirect); subDirect=NULL;	// free subDirect;	
 }

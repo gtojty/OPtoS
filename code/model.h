@@ -1,4 +1,5 @@
-#define _LineLen 300
+#define _LineLen 3000
+#define _nameLen 10
 
 // network components
 Net *reading;
@@ -19,10 +20,21 @@ double _weightnoise,_actnoise,_inputnoise;
 double _errrad,_range;
 int _OrthoPhonS,_HidS,_SemS,_SemHidS;
 
-// parameters for file names storing training and testing examples;
+// parameters for semantics
+int _sem_number;
+typedef struct
+{ char name[_nameLen];	// name of semantics;
+  Real *vec;	// features of semantics;
+} Sem;
+Sem *_sem;
+
+// parameters for file names storing semantics and training and testing examples;
+char *_semF;
 char *_exTrF_StoS, *_exTeF_StoS;
 char *_exTrF, *_exTeF;
 
 // function to build the network and phoneme dictionary;
 void build_model(int ticks);
 int count_connections(Net *net);
+void load_sem(char *SemF);
+void delete_sem(void);

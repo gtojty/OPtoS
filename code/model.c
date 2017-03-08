@@ -85,3 +85,49 @@ int count_connections(Net *net)
     	count += (net->connections[i]->from->numUnits)*(net->connections[i]->to->numUnits);
   	return count;
 }
+
+void load_sem(char *SemF)
+{ // initialize sem by reading from SemF;
+	assert(SemF!=NULL);
+	int cursem, curvec;
+	FILE *f=NULL;
+	char line[_LineLen], *p=NULL, *token=NULL;
+	// initialize SemDic;
+	_sem=malloc(_sem_number*sizeof(Sem)); assert(_sem!=NULL);
+	// read from SemF;
+	if((f=fopen(SemF,"r"))==NULL){ printf("Can't open %s\n", SemF); exit(1); }
+	cursem=0;
+	while(!feof(f))
+    	{ fgets(line, _LineLen, f);
+		  // get name string;
+		  token=strtok(line," "); strcpy(_sem[cursem].name, token); token=NULL; 
+		  // get semantic features;	
+		  _sem[cursem].vec=malloc(_SemS*sizeof(Real)); assert(_sem[cursem].vec!=NULL);
+		  curvec=0;
+		  while(p=strtok(NULL, " "))
+			{ _sem[cursem].vec[curvec]=atof(p);
+		  	  curvec++;
+			}
+		  cursem++;
+		}
+	fclose(f);
+	/*
+	// print SemDic
+	int i, j;
+	for(i=0;i<_sem_number;i++)
+		{ printf("Name %s:", _sem[i].name);
+		  for(j=0;j<_SemS;j++)
+	  		printf(" %2.1f", _sem[i].vec[j]);
+	      printf("\n");
+		}
+	*/
+}
+
+void delete_sem(void)
+{ // delete sem;
+	int i;
+	for(i=0;i<_sem_number;i++)
+		{ free(_sem[i].vec); _sem[i].vec=NULL;
+		}
+	free(_sem); _sem=NULL;
+}

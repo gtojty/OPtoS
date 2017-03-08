@@ -34,7 +34,7 @@ is optional.
 
 #### Running the Simulation
 
-In order to run a simulation, put the exe file (OPtoS), parameter file
+In order to run a simulation, put the exe file (OPtoS), semantics dictionary (sem.txt), parameter file
 (para.txt), and training and testing examples (Tr#.txt and Te#.txt, see ./SemDict) 
 into the same directory.
 
