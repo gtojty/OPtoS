@@ -278,10 +278,10 @@ Real calacu(Real *out, Real *target, char *transSem)
 		trans[i]=0.0;
 
 	// translate out to trans
-	transSem=getsem(out, trans);
+	strcpy(transSem, getsem(out, trans));
 	
 	// check correct translation
-	if(transSem==NULL) return 0.0;
+	if(*transSem=='\0') return 0.0;
 	else
 		{ NoAccu=0;
 		  for(i=0;i<_SemS;i++)
@@ -330,14 +330,15 @@ Real getacu(Net *net, ExampleSet *examples, int ticks, int iter, FILE *f1, char 
 			{ out[j]=output->outputs[ticks-1][j];	// get output from the network;
 			  target[j]=get_value(ex->targets,output->index,ticks-1,j);	// get target from the example;
 			}		  
-		  
+
+		  transSem=malloc(_LineLen*sizeof(char)); assert(transSem!=NULL);
 		  itemaccu=calacu(out,target,transSem);	// caculate item accuracy;
 		  accu+=itemaccu;	// accumulate item accuracy;
 
 		  // record results to files;
 		  fprintf(f1,"\t%5.3f", itemaccu);	// record item accuracy;
 		  fprintf(f2,"\t%s", transSem);	// record translated semantics;
-		  transSem=NULL;
+		  free(transSem); transSem=NULL;
 		  fprintf(f3, "\t%5.3f", itemerror);	// record item summed square error;
 		  
 		  free(out); out=NULL; free(target); target=NULL;	// release memory for out and target;
