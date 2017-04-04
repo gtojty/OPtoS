@@ -62,7 +62,7 @@ readOutput <- function(f){
   retval <- read.delim(f)
   retval <- data.frame(hlsize, lrnrate, run, retval)
 }
-# get OtoP accuracy data
+# get PtoS accuracy data
 f <- dir(".", pattern="^output.txt$", recursive=TRUE)
 avgaccu <- ldply(f, readOutput); names(avgaccu) <- str_to_lower(names(avgaccu))
 write.csv(avgaccu, './AvgAcu_PtoS.csv', row.names=FALSE)
@@ -207,25 +207,25 @@ getItemAcuActSemErr <- function(f1, f2, f3, PSList){
   
   return(t)
 }
-# for OtoP training items
+# for PtoS training items
 f1 <- dir(".", pattern="^itemacu_tr.txt$", recursive=TRUE)
 f2 <- dir(".", pattern="^outsemTr.txt$", recursive=TRUE)
 f3 <- dir(".", pattern="^outsemErrTr.txt$", recursive=TRUE)
 tr <- getItemAcuActSemErr(f1, f2, f3, PSList_tr)
 write.csv(tr, './tr_allres_PtoS.csv', row.names=FALSE)
-# for OtoP testing items
+# for PtoS testing items
 f1 <- dir(".", pattern="^itemacu_te.txt$", recursive=TRUE)
 f2 <- dir(".", pattern="^outsemTe.txt$", recursive=TRUE)
 f3 <- dir(".", pattern="^outsemErrTe.txt$", recursive=TRUE)
 te <- getItemAcuActSemErr(f1, f2, f3, PSList_te)
 write.csv(te, './te_allres_PtoS.csv', row.names=FALSE)
 
-# for PtoP training items
+# for StoS training items
 f1 <- dir(".", pattern="^itemacu_tr_stos.txt$", recursive=TRUE)
 f2 <- dir(".", pattern="^outsemTr_stos.txt$", recursive=TRUE)
 tr_stos <- getItemAcuActSemErr(f1, f2, NULL, PSList_tr)
 write.csv(tr_stos, './tr_allres_StoS.csv', row.names=FALSE)
-# for PtoP testing items
+# for StoS testing items
 f1 <- dir(".", pattern="^itemacu_te_stos.txt$", recursive=TRUE)
 f2 <- dir(".", pattern="^outsemTe_stos.txt$", recursive=TRUE)
 te_stos <- getItemAcuActSemErr(f1, f2, NULL, OPList_te)
