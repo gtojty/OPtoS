@@ -235,9 +235,14 @@ into an executable.
    As shown, this example recruits 4 nodes to run for 24
    hours. Note that the total number of runs has to be a multipler of 4.
 
-5. You can check job status thus: 
+5. check status of a job this:
+
    ```
-   bjobs; To kill a job: $ bkill job_ID
+   bjobs
+   ```
+   to kill a job: 
+   ```
+   bkill job_ID
    ```
 
 ### Using Omega
@@ -291,5 +296,53 @@ into an executable.
 5. check status of a job this:
 
    ```
-   qstat -u USER; to kill a job: $ qdel job_ID
+   qstat -u USER
    ```
+   to kill a job: 
+   ```
+   qdel job_ID
+   ```
+
+### Using Omega-Next, Grace-Next and Farnam (Slurm based)
+
+#### Compilation
+
+Note that MikeNet has to be installed on Omega before it can be linked
+into an executable.
+
+1. same as for Grace.
+
+2. load the module for GCC: `module load Langs/GCC` (for Grace-Next); `module load Langs/GCC/4.5.3` (for Omega-Next); `module load GCC` (for Farnam)
+
+3. same as for Grace.
+
+4. run the results via SimpleQueue
+   for Grace-Next or Omega-Next
+   ```
+   module load Tools/SimpleQueue
+   sqCreateScript -q week -w 168:00:00 -n 4 tasklist.txt > job.sh
+   sbatch job.sh
+   ```
+   for Farnam:
+   ```
+   module load SimpleQueue
+   sqCreateScript -q week -w 168:00:00 -n 4 tasklist.txt > job.sh
+   sbatch job.sh
+   ```
+   As shown, this example recruits 4 nodes (2 cpus each) to run for 168
+   hours (one week). Note that the total number of runs has to be a multipler of
+   2.
+
+5. check status of a job this:
+
+   ```
+   squeue -u USER; 
+   ```
+   to kill a job: 
+   ```
+   scancel job_ID
+   ```
+ 
+#### Running a Simulation
+
+Same as Grace/Omega
