@@ -7,7 +7,7 @@ library(plyr)
 library(Rmisc)
 
 options(max.print=10000)
-drawrange <- c(1e4,3e6); errrange_ptos <- c(10, 3e6); errrange_stos <- c(10, 1e6)
+drawrange <- c(1e4,1e8); errrange_ptos <- c(10, 1e8); errrange_stos <- c(10, 1e8)
 scinot <- function(x){
   if(is.numeric(x)){ format(x, scientific=TRUE)
   }else{ error("x must be numeric") }
@@ -37,15 +37,15 @@ crtDF <- function(t){
   DF <- data.frame(word=wordList, prob=as.numeric(probList), phono=phonoList, sem=semList, ps=PSList)
   return(list(first=DF, second=PSList))
 }
-TrfileNam <- 'Tr_300_PtoS_0.0.txt'; trf <- readLines(TrfileNam); head(trf, 20)
-TefileNam <- 'Tr_300_PtoS_0.0.txt'; tef <- readLines(TefileNam); head(tef, 20)
+TrfileNam <- 'Tr_nohomo_300_PtoS_0.0.txt'; trf <- readLines(TrfileNam); head(trf, 20)
+TefileNam <- 'Tr_nohomo_300_PtoS_0.0.txt'; tef <- readLines(TefileNam); head(tef, 20)
 
 r <- crtDF(trf)
-# noPh: 4005; noUniqueP: 3627; noOP: 4005 
+# noPh: 3627; noUniqueP: 3627; noOP: 3627 
 DFtr <- r$first; PSList_tr <- r$second
 write.csv(DFtr, './trainingexp.csv', row.names=FALSE)
 r <- crtDF(tef)
-# noPh: 4005; noUniqueP: 3627; noOP: 4005 
+# noPh: 3627; noUniqueP: 3627; noOP: 3627 
 DFte <- r$first; PSList_te <- r$second
 write.csv(DFte, './testingexp.csv', row.names=FALSE)
 
@@ -81,13 +81,13 @@ ggsave(paste(figDir, 'Error_StoS_int.png', sep=""), dpi = 300, height = 6, width
 
 # draw training accuracy
 ggplot(avgaccu, aes(x=iter, y=acutr)) + scale_x_log10(labels=scinot) +  
-  coord_cartesian(xlim=drawrange) + xlab("Training Trials (log10)") + ylab("Avg Acc") +  
+  coord_cartesian(xlim=drawrange, ylim=c(0.0,1.0)) + xlab("Training Trials (log10)") + ylab("Avg Acc") +  
   ggtitle("Training Acc x Trials \n Hid Layer & Learn Rate") +
   geom_point(alpha=.2, color="blue") + geom_smooth(span=.2, color="darkorange") + facet_grid(lrnrate~hlsize)
 ggsave(paste(figDir, 'AvgAcc_Tr_PtoS.png', sep=""), dpi = 300, height = 6, width = 12, units = 'in')
 # draw testing accuracy
 ggplot(avgaccu, aes(x=iter, y=acute)) + scale_x_log10(labels=scinot) +  
-  coord_cartesian(xlim=drawrange) + xlab("Training Trials (log10)") + ylab("Avg Acc") +  
+  coord_cartesian(xlim=drawrange, ylim=c(0.0,1.0)) + xlab("Training Trials (log10)") + ylab("Avg Acc") +  
   ggtitle("Testing Acc x Trials\n Hid Layer & Learn Rate") +
   geom_point(alpha=.2, color="blue") + geom_smooth(span=.2, color="darkorange") + facet_grid(lrnrate~hlsize)
 ggsave(paste(figDir, 'AvgAcc_Te_PtoS.png', sep=""), dpi = 300, height = 6, width = 12, units = 'in')
@@ -113,7 +113,7 @@ timepoint <- 1e6; runID <- 1
 trainfreq_sub <- trainfreq[trainfreq$iter==timepoint & trainfreq$run==runID,]
 # timepoint <- 1e6
 # trainfreq_sub <- trainfreq[trainfreq$iter==timepoint,]
-wrd <- which(str_detect(names(trainfreq_sub), "^f[0-9]+$")); names(wrd) <- 1:4005
+wrd <- which(str_detect(names(trainfreq_sub), "^f[0-9]+$")); names(wrd) <- 1:3627
 freqdist <- tidyr::gather(trainfreq_sub, wrd, key="item", value="occur")
 
 ggplot(freqdist, aes(x=item, y=occur, color=run)) + geom_bar(stat="identity", width=0.1, color=freqdist$run) +
@@ -139,7 +139,7 @@ timepoint <- 1e6; runID <- 1
 trainfreq_sub <- trainfreq[trainfreq$iter==timepoint & trainfreq$run==runID,]
 # timepoint <- 1e6
 # trainfreq_sub <- trainfreq[trainfreq$iter==timepoint,]
-wrd <- which(str_detect(names(trainfreq_sub), "^f[0-9]+$")); names(wrd) <- 1:4005
+wrd <- which(str_detect(names(trainfreq_sub), "^f[0-9]+$")); names(wrd) <- 1:3627
 freqdist <- tidyr::gather(trainfreq_sub, wrd, key="item", value="occur")
 
 ggplot(freqdist, aes(x=item, y=occur, color=run)) + geom_bar(stat="identity", width=0.1, color=freqdist$run) +
@@ -234,12 +234,12 @@ write.csv(te_stos, './te_allres_StoS.csv', row.names=FALSE)
 ## Plot average accuracy as output by model
 tmp <- tr[,c("hlsize", "lrnrate", "iter", "avg")]; tmp <- unique(tmp)
 ggplot(tmp, aes(x=iter, y=avg)) + scale_x_log10(labels=scinot) +
-  coord_cartesian(xlim=drawrange) + xlab("Training Trials (log10)") + ylab("Avg Acc") +
+  coord_cartesian(xlim=drawrange, ylim=c(0.0,1.0)) + xlab("Training Trials (log10)") + ylab("Avg Acc") +
   ggtitle("Training Acc x Trials\n Hid Layer & Learn Rate") +
   geom_point(alpha=.2, color="blue") + geom_smooth(span=.2, color="darkorange") + facet_grid(lrnrate~hlsize)
 tmp <- te[,c("hlsize", "lrnrate", "iter", "avg")]; tmp <- unique(tmp)
 ggplot(tmp, aes(x=iter, y=avg)) + scale_x_log10(labels=scinot) +
-  coord_cartesian(xlim=drawrange) + xlab("Training Trials (log10)") + ylab("Avg Acc") +
+  coord_cartesian(xlim=drawrange, ylim=c(0.0,1.0)) + xlab("Training Trials (log10)") + ylab("Avg Acc") +
   ggtitle("Testing Acc x Trials\n Hid Layer Size & Learn Rate") +
   geom_point(alpha=.2, color="blue") + geom_smooth(span=.2, color="darkorange") + facet_grid(lrnrate~hlsize)
 
@@ -273,17 +273,17 @@ getCVCdata <- function(type, t){
 # tesub <- getCVCdata("Harm&Seidenberg1999", te)
 ## Based on Harm 1998
 # calculate meanings based on different phonological structures
-trsub <- getCVCdata("Harm1998", tr) # noCVC:  1513 ; noCVCC:  810 ; noCCVC:  782 ; noCCVCC:  284
-tesub <- getCVCdata("Harm1998", te) # noCVC:  1513 ; noCVCC:  810 ; noCCVC:  782 ; noCCVCC:  284 
+trsub <- getCVCdata("Harm1998", tr) # noCVC:  1311 ; noCVCC:  769 ; noCCVC:  744 ; noCCVCC:  278
+tesub <- getCVCdata("Harm1998", te) # noCVC:  1311 ; noCVCC:  769 ; noCCVC:  744 ; noCCVCC:  278 
 
 ## find phon forms that are CVC with simple vowels. This def will also include CV, where V is a diphthong (e.g., pay, buy).
 ggplot(trsub, aes(x=iter, y=accuracy)) + scale_x_log10(labels=scinot) +
-  coord_cartesian(xlim=drawrange) + xlab("Training Trials (log10)") + ylab("Avg Acc") +
+  coord_cartesian(xlim=drawrange, ylim=c(0.0,1.0)) + xlab("Training Trials (log10)") + ylab("Avg Acc") +
   ggtitle("Training Phon CVC vs. CCVC vs. CVCC vs. CCVCC") +
   geom_smooth(aes(color=as.factor(syl)), span=.2) + facet_grid(lrnrate~hlsize)
 ggsave(paste(figDir, 'CVCAcc_tr.png', sep=""), dpi = 300, height = 6, width = 12, units = 'in')
 ggplot(tesub, aes(x=iter, y=accuracy)) + scale_x_log10(labels=scinot) +
-  coord_cartesian(xlim=drawrange) + xlab("Training Trials (log10)") + ylab("Avg Acc") +
+  coord_cartesian(xlim=drawrange, ylim=c(0.0,1.0)) + xlab("Training Trials (log10)") + ylab("Avg Acc") +
   ggtitle("Testing Phon CVC vs. CCVC vs. CVCC vs. CCVCC") +
   geom_smooth(aes(color=as.factor(syl)), span=.2) + facet_grid(lrnrate~hlsize)
 ggsave(paste(figDir, 'CVCAcc_te.png', sep=""), dpi = 300, height = 6, width = 12, units = 'in')
