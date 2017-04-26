@@ -1,0 +1,27 @@
+// Network Parameters
+1	// int _SimType; type of simulation; 0, OtoS; 1, PtoS;
+7	// int _tick_StoS; number of ticks in one epoch (trial) of stos training; different types of training can happen in different ticks; 
+7	// int _tick_OPtoS; number of ticks in one epoch (trial) of optos training; different types of training can happen in different ticks;
+0.25	// double _intconst; default value is 0.25; 0.25 or 0.33;
+1	// int _tai; default value is 1
+1e-1	// double _epsi; episilon value for the activation curve; default value is 0.001;
+0	// int _acttype; LOGISTIC_ACTIVATION (0) (Harm 1998), TANH_ACTIVATION (1) (Harm & Seidenberg 1999), FAST_LOGISTIC_ACTIVATION (2), LINEAR_ACTIVATION (3), or STEP_ACTIVATION (4)
+1	// int _errortype; SUM_SQUARED_ERROR (1) or CROSS_ENTROPY_ERROR (2)
+0	// int _weightnoisetype; NO_NOISE (0), ADDITIVE_NOISE (1), or MULTIPLICATIVE_NOISE (2)
+0.0	// double _weightnoise; noise on connection weights;
+0.0	// double _actnoise; activation noise;
+0.0	// double _inputnoise; input noise;
+0.1	// double _errrad; error radius, errors less than it are counted as zero; default value is 0.1;
+0.1	// double _range; range of initial weights, the initially randomized weights are positive and negative _range;
+175	// int _OrthoPhonS; size (number of nodes) of the orthographical (208: 26*8) / phonological (175: 25*7) layer;
+100	// int _HidS; size of the hidden layer between the orthographical and semantic layers;
+300	// int _SemS; size of the semantic layer; 50, 100, 200, or 300;
+50	// int _SemHidS; size of the hidden layers between semantic layers, this is the cleanup layer;
+// Parameters for semantics
+3627	// int _sem_number; number of semantics in the dictionary; 4005 (all) or 3627 (no homophone);
+// Parameters for file names storing training and testing examples
+./sem_nohomo_300.txt	// char *_semF; file name of the semantics dictionary, which is a list of semantics and their feature values;
+./Tr_nohomo_300_PtoS_1.0.txt	// char *_exTrF; file name of the training examples;
+// Parameters for weights files
+4	// int _numRuns; number of runs in each condition
+weights.txt.gz	// char *_weiF; file name of the network weights file; 
