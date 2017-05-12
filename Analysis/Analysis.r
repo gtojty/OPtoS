@@ -7,7 +7,7 @@ library(plyr)
 library(Rmisc)
 
 options(max.print=10000)
-drawrange <- c(1e4,1e8); errrange_ptos <- c(10, 1e8); errrange_stos <- c(10, 1e8)
+drawrange <- c(1e4,1e8); errrange_ptos <- c(1e4, 1e8); errrange_stos <- c(1e4, 1e8)
 scinot <- function(x){
   if(is.numeric(x)){ format(x, scientific=TRUE)
   }else{ error("x must be numeric") }
@@ -121,12 +121,12 @@ ggplot(freqdist, aes(x=item, y=occur, color=run)) + geom_bar(stat="identity", wi
   ggtitle(paste("Occurrence of Training Examples\nat ", timepoint, " training; Run ", runID, sep="")) +
   facet_grid(lrnrate~hlsize)
 ggsave(paste(figDir, 'FBar_PtoS_', timepoint, '.png', sep=""), dpi = 300, height = 6, width = 18, units = 'in')
-ggplot(freqdist, aes(occur, color=run)) + geom_histogram(bins=50) + facet_grid(hlsize~lrnrate) +
+ggplot(freqdist, aes(occur, color=run)) + geom_histogram(bins=50) + facet_grid(lrnrate~hlsize) +
   xlab("Occurrence") + ylab("Count") +
   ggtitle(paste("Histogram of Training Examples\n at ", timepoint, " Run ", runID, sep=""))
 ggsave(paste(figDir, 'FHist_PtoS_', timepoint, '.png', sep=""), dpi = 300, height = 6, width = 18, units = 'in')
 # log scale
-ggplot(freqdist, aes(occur, color=run)) + geom_histogram(bins=50) + facet_grid(hlsize~lrnrate) +
+ggplot(freqdist, aes(occur, color=run)) + geom_histogram(bins=50) + facet_grid(lrnrate~hlsize) +
   xlab("Occurrence") + ylab("Count") + scale_x_log10() +
   ggtitle(paste("Histogram of Training Examples\n at ", timepoint, " Run ", runID, sep=""))
 ggsave(paste(figDir, 'FHist_PtoS_', timepoint, '_log.png', sep=""), dpi = 300, height = 6, width = 18, units = 'in')
@@ -147,12 +147,12 @@ ggplot(freqdist, aes(x=item, y=occur, color=run)) + geom_bar(stat="identity", wi
   ggtitle(paste("Occurrence of Training Examples\nat ", timepoint, " training; Run ", runID, sep="")) +
   facet_grid(lrnrate~hlsize)
 ggsave(paste(figDir, 'FBar_StoS_', timepoint, '.png', sep=""), dpi = 300, height = 6, width = 18, units = 'in')
-ggplot(freqdist, aes(occur, color=run)) + geom_histogram(bins=50) + facet_grid(hlsize~lrnrate) +
+ggplot(freqdist, aes(occur, color=run)) + geom_histogram(bins=50) + facet_grid(lrnrate~hlsize) +
   xlab("Occurrence") + ylab("Count") +
   ggtitle(paste("Histogram of Training Examples\n at ", timepoint, " Run ", runID, sep=""))
 ggsave(paste(figDir, 'FHist_StoS_', timepoint, '.png', sep=""), dpi = 300, height = 6, width = 18, units = 'in')
 # log scale
-ggplot(freqdist, aes(occur, color=run)) + geom_histogram(bins=50) + facet_grid(hlsize~lrnrate) +
+ggplot(freqdist, aes(occur, color=run)) + geom_histogram(bins=50) + facet_grid(lrnrate~hlsize) +
   xlab("Occurrence") + ylab("Count") + scale_x_log10() +
   ggtitle(paste("Histogram of Training Examples\n at ", timepoint, " Run ", runID, sep=""))
 ggsave(paste(figDir, 'FHist_StoS_', timepoint, '_log.png', sep=""), dpi = 300, height = 6, width = 18, units = 'in')
